@@ -53,15 +53,17 @@ func calculateMaximumHealth(class string) int {
 }
 
 func generateCharacter(name string, class string) Character {
+	var charName = os.Args[1]
+	var charClass = os.Args[2]
 	var level = 1
 	var strength = Dice.RollStat()
 	var dexterity = Dice.RollStat()
 	var constitution = Dice.RollStat()
-	var hitPointMaximum = calculateMaximumHealth(os.Args[2]) + constitution/2
+	var hitPointMaximum = calculateMaximumHealth(charClass) + constitution/2
 	var wisdom = Dice.RollStat()
 	var intelligence = Dice.RollStat()
 	var charisma = Dice.RollStat()
-	var newCharacter = Character{os.Args[1], os.Args[2], level, hitPointMaximum, strength, dexterity, constitution, wisdom, intelligence, charisma}
+	var newCharacter = Character{charName, charClass, level, hitPointMaximum, strength, dexterity, constitution, wisdom, intelligence, charisma}
 	return newCharacter
 }
 
