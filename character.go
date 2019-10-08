@@ -1,9 +1,13 @@
 package main
 
 import (
+	"database/sql"
 	Dice "dnd_dice"
 	"fmt"
+	"log"
 	"os"
+
+	_ "github.com/lib/pq"
 )
 
 type Character struct {
@@ -20,6 +24,13 @@ type Character struct {
 	charisma        int
 	// TODO AC
 }
+
+const (
+	host   = "localhost"
+	port   = 8000
+	user   = "postgres"
+	dbname = "postgres"
+)
 
 func calculateMaximumHealth(class string) int {
 	value := 0
@@ -69,6 +80,17 @@ func generateCharacter(name string, class string) Character {
 
 func main() {
 	var NewCharacter Character = generateCharacter(os.Args[1], os.Args[2])
-	fmt.Println(NewCharacter)
+	psqlInfo := fmt.Sprintf("host=%s port=%d user=%s dbname=%s sslmode=disable", host, port, user, dbname)
+	//connStr := "postgres://postgres:@localhost/8000/postgres"
+	db, err := sql.Open("postgres", psqlInfo)
+	if err != nil {
+		log.Fatal(err)
+	}
+	var charInsert = "INSERT INTO public.dnd_characters (name,class,level,hitpointmaximum,strength,dexterity,constitution,wisdom,intelligence,charisma) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10);"
+
+	var _, insertErr = db.Exec(charInsert, NewCharacter.name, NewCharacter.class, NewCharacter.level, NewCharacter.hitPointMaximum, NewCharacter.strength, NewCharacter.dexterity, NewCharacter.constitution, NewCharacter.wisdom, NewCharacter.intelligence, NewCharacter.charisma)
+	if insertErr != nil {
+		panic(err)
+	}
 
 }
