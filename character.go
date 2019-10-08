@@ -32,6 +32,11 @@ const (
 	dbname = "postgres"
 )
 
+func main() {
+	var NewCharacter Character = generateCharacter(os.Args[1], os.Args[2])
+	insertCharacter(NewCharacter)
+}
+
 func calculateMaximumHealth(class string, modifier int) int {
 	value := 0
 	switch class {
@@ -151,19 +156,16 @@ func generateCharacter(name string, class string) Character {
 	return newCharacter
 }
 
-func main() {
-	var NewCharacter Character = generateCharacter(os.Args[1], os.Args[2])
+func insertCharacter(character Character) {
 	psqlInfo := fmt.Sprintf("host=%s port=%d user=%s dbname=%s sslmode=disable", host, port, user, dbname)
-	//connStr := "postgres://postgres:@localhost/8000/postgres"
 	db, err := sql.Open("postgres", psqlInfo)
 	if err != nil {
 		log.Fatal(err)
 	}
 	var charInsert = "INSERT INTO public.dnd_characters (name,class,level,hitpointmaximum,strength,dexterity,constitution,wisdom,intelligence,charisma) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10);"
 
-	var _, insertErr = db.Exec(charInsert, NewCharacter.name, NewCharacter.class, NewCharacter.level, NewCharacter.hitPointMaximum, NewCharacter.strength, NewCharacter.dexterity, NewCharacter.constitution, NewCharacter.wisdom, NewCharacter.intelligence, NewCharacter.charisma)
+	var _, insertErr = db.Exec(charInsert, character.name, character.class, character.level, character.hitPointMaximum, character.strength, character.dexterity, character.constitution, character.wisdom, character.intelligence, character.charisma)
 	if insertErr != nil {
 		panic(err)
 	}
-
 }
