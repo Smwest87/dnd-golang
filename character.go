@@ -95,6 +95,7 @@ func generateCharacter(name string, class string) Character {
 	var charisma = Dice.RollStat()
 	var mods modArray
 	var newCharacter = Character{charName, charClass, level, hitPointMaximum, strength, dexterity, constitution, wisdom, intelligence, charisma, mods}
+	//assignModifiers(newCharacter)
 	newCharacter.modifiers[0] = calculateAbilityModifiers(newCharacter.strength)
 	newCharacter.modifiers[1] = calculateAbilityModifiers(newCharacter.dexterity)
 	newCharacter.modifiers[2] = calculateAbilityModifiers(newCharacter.constitution)
