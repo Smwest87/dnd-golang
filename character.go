@@ -8,7 +8,7 @@ import (
 	"math"
 	"os"
 
-	_ "github.com/lib/pq"
+	pq "github.com/lib/pq"
 )
 
 type Character struct {
@@ -23,8 +23,11 @@ type Character struct {
 	wisdom          int
 	intelligence    int
 	charisma        int
+	modifiers       modArray
 	// TODO AC
 }
+
+type modArray [6]int
 
 const (
 	host   = "localhost"
@@ -90,7 +93,14 @@ func generateCharacter(name string, class string) Character {
 	var wisdom = Dice.RollStat()
 	var intelligence = Dice.RollStat()
 	var charisma = Dice.RollStat()
-	var newCharacter = Character{charName, charClass, level, hitPointMaximum, strength, dexterity, constitution, wisdom, intelligence, charisma}
+	var mods modArray
+	var newCharacter = Character{charName, charClass, level, hitPointMaximum, strength, dexterity, constitution, wisdom, intelligence, charisma, mods}
+	newCharacter.modifiers[0] = calculateAbilityModifiers(newCharacter.strength)
+	newCharacter.modifiers[1] = calculateAbilityModifiers(newCharacter.dexterity)
+	newCharacter.modifiers[2] = calculateAbilityModifiers(newCharacter.constitution)
+	newCharacter.modifiers[3] = calculateAbilityModifiers(newCharacter.wisdom)
+	newCharacter.modifiers[4] = calculateAbilityModifiers(newCharacter.intelligence)
+	newCharacter.modifiers[5] = calculateAbilityModifiers(newCharacter.charisma)
 	return newCharacter
 }
 
@@ -100,10 +110,20 @@ func insertCharacter(character Character) {
 	if err != nil {
 		log.Fatal(err)
 	}
-	var charInsert = "INSERT INTO public.dnd_characters (name,class,level,hitpointmaximum,strength,dexterity,constitution,wisdom,intelligence,charisma) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10);"
+	var charInsert = "INSERT INTO public.dnd_characters (name,class,level,hitpointmaximum,strength,dexterity,constitution,wisdom,intelligence,charisma, modifiers) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10, $11);"
 
-	var _, insertErr = db.Exec(charInsert, character.name, character.class, character.level, character.hitPointMaximum, character.strength, character.dexterity, character.constitution, character.wisdom, character.intelligence, character.charisma)
+	var _, insertErr = db.Exec(charInsert, character.name, character.class, character.level, character.hitPointMaximum, character.strength, character.dexterity, character.constitution, character.wisdom, character.intelligence, character.charisma, pq.Array(character.modifiers))
 	if insertErr != nil {
 		panic(err)
 	}
+}
+
+func assignModifiers(character Character) modArray {
+	character.modifiers[0] = calculateAbilityModifiers(character.strength)
+	character.modifiers[1] = calculateAbilityModifiers(character.dexterity)
+	character.modifiers[2] = calculateAbilityModifiers(character.constitution)
+	character.modifiers[3] = calculateAbilityModifiers(character.wisdom)
+	character.modifiers[4] = calculateAbilityModifiers(character.intelligence)
+	character.modifiers[5] = calculateAbilityModifiers(character.charisma)
+	return character.modifiers
 }
