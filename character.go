@@ -23,6 +23,7 @@ type Character struct {
 	wisdom          int
 	intelligence    int
 	charisma        int
+	initiative      int
 	modifiers       modArray
 	// TODO AC
 }
@@ -93,8 +94,9 @@ func generateCharacter(name string, class string) Character {
 	var wisdom = Dice.RollStat()
 	var intelligence = Dice.RollStat()
 	var charisma = Dice.RollStat()
+	var initiative = int(math.Floor((float64(dexterity) - 10) / 2))
 	var mods modArray
-	var newCharacter = Character{charName, charClass, level, hitPointMaximum, strength, dexterity, constitution, wisdom, intelligence, charisma, mods}
+	var newCharacter = Character{charName, charClass, level, hitPointMaximum, strength, dexterity, constitution, wisdom, intelligence, charisma, initiative, mods}
 	newCharacter.modifiers = assignModifiers(newCharacter)
 	return newCharacter
 }
@@ -105,9 +107,9 @@ func insertCharacter(character Character) {
 	if err != nil {
 		log.Fatal(err)
 	}
-	var charInsert = "INSERT INTO public.dnd_characters (name,class,level,hitpointmaximum,strength,dexterity,constitution,wisdom,intelligence,charisma, modifiers) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10, $11);"
+	var charInsert = "INSERT INTO public.dnd_characters (name,class,level,hitpointmaximum,strength,dexterity,constitution,wisdom,intelligence,charisma, initiative, modifiers) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12);"
 
-	var _, insertErr = db.Exec(charInsert, character.name, character.class, character.level, character.hitPointMaximum, character.strength, character.dexterity, character.constitution, character.wisdom, character.intelligence, character.charisma, pq.Array(character.modifiers))
+	var _, insertErr = db.Exec(charInsert, character.name, character.class, character.level, character.hitPointMaximum, character.strength, character.dexterity, character.constitution, character.wisdom, character.intelligence, character.charisma, character.initiative, pq.Array(character.modifiers))
 	if insertErr != nil {
 		panic(err)
 	}
