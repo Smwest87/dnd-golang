@@ -14,18 +14,19 @@ import (
 
 //Character contains character name class and level
 type Character struct {
-	name            string
-	class           string
-	level           int
-	hitPointMaximum int
-	strength        int
-	dexterity       int
-	constitution    int
-	wisdom          int
-	intelligence    int
-	charisma        int
-	initiative      int
-	modifiers       modArray
+	ID              int      `json:"id"`
+	Name            string   `json:"name"`
+	Class           string   `json:"class"`
+	Level           int      `json:"level"`
+	HitPointMaximum int      `json:"hit_point_maximum"`
+	Strength        int      `json:"strength"`
+	Dexterity       int      `json:"dexterity"`
+	Constitution    int      `json:"constitution"`
+	Wisdom          int      `json:"wisdom"`
+	Intelligence    int      `json:"intelligence"`
+	Charisma        int      `json:"charisma"`
+	Initiative      int      `json:"intiative"`
+	Modifiers       modArray `json:"modifiers"`
 	// TODO AC
 	// TODO FEATS
 	// TODO Class Properties
@@ -34,10 +35,10 @@ type Character struct {
 type modArray [6]int
 
 const (
-	host   = "localhost"
-	port   = 5432
-	user   = "postgres"
-	dbname = "postgres"
+	Host   = "localhost"
+	Port   = 5432
+	User   = "postgres"
+	Dbname = "postgres"
 )
 
 var password = os.Getenv("DB_PASSWORD")
@@ -194,60 +195,60 @@ func calculateAbilityModifiers(stat int) int {
 func GenerateCharacter(name string, class string) (*Character, error) {
 	roller := Dice.NewRoller()
 	character := Character{}
-	character.name = os.Args[1]
-	character.class = os.Args[2]
-	character.level = 1
+	character.Name = os.Args[1]
+	character.Class = os.Args[2]
+	character.Level = 1
 	strength, err := roller.RollStat()
 	if err != nil {
 		return nil, err
 	}
-	character.strength = strength
+	character.Strength = strength
 	dexterity, err := roller.RollStat()
 	if err != nil {
 		return nil, err
 	}
-	character.dexterity = dexterity
+	character.Dexterity = dexterity
 	constitution, err := roller.RollStat()
 	if err != nil {
 		return nil, err
 	}
-	character.constitution = constitution
-	hitPointMaximum, err := calculateMaximumHealth(character.class, calculateAbilityModifiers(constitution))
+	character.Constitution = constitution
+	hitPointMaximum, err := calculateMaximumHealth(character.Class, calculateAbilityModifiers(constitution))
 	if err != nil {
 		return nil, err
 	}
-	character.hitPointMaximum = hitPointMaximum
+	character.HitPointMaximum = hitPointMaximum
 	wisdom, err := roller.RollStat()
 	if err != nil {
 		return nil, err
 	}
-	character.wisdom = wisdom
+	character.Wisdom = wisdom
 	intelligence, err := roller.RollStat()
 	if err != nil {
 		return nil, err
 	}
-	character.intelligence = intelligence
+	character.Intelligence = intelligence
 	charisma, err := roller.RollStat()
 	if err != nil {
 		return nil, err
 	}
-	character.charisma = charisma
-	character.initiative = int(math.Floor((float64(character.dexterity) - 10) / 2))
+	character.Charisma = charisma
+	character.Initiative = int(math.Floor((float64(character.Dexterity) - 10) / 2))
 	//TODO Armor Class and FEATS
-	character.modifiers = assignModifiers(character)
+	character.Modifiers = assignModifiers(character)
 	return &character, err
 }
 
 //InsertCharacter -- insert character into PSQL db
 func InsertCharacter(character Character) (sql.Result, error) {
-	psqlInfo := fmt.Sprintf("host=%s port=%d user=%s password=%s dbname=%s sslmode=disable", host, port, user, password, dbname)
+	psqlInfo := fmt.Sprintf("host=%s port=%d user=%s password=%s dbname=%s sslmode=disable", Host, Port, User, password, Dbname)
 	db, err := sql.Open("postgres", psqlInfo)
 	if err != nil {
 		return nil, err
 	}
 	var charInsert = "INSERT INTO dnd.dnd_characters (name,class,level,hitpointmaximum,strength,dexterity,constitution,wisdom,intelligence,charisma, initiative, modifiers) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12);"
 
-	var result, insertErr = db.Exec(charInsert, character.name, character.class, character.level, character.hitPointMaximum, character.strength, character.dexterity, character.constitution, character.wisdom, character.intelligence, character.charisma, character.initiative, pq.Array(character.modifiers))
+	var result, insertErr = db.Exec(charInsert, character.Name, character.Class, character.Level, character.HitPointMaximum, character.Strength, character.Dexterity, character.Constitution, character.Wisdom, character.Intelligence, character.Charisma, character.Initiative, pq.Array(character.Modifiers))
 	if insertErr != nil {
 		return nil, insertErr
 	}
@@ -256,11 +257,11 @@ func InsertCharacter(character Character) (sql.Result, error) {
 }
 
 func assignModifiers(character Character) modArray {
-	character.modifiers[0] = calculateAbilityModifiers(character.strength)
-	character.modifiers[1] = calculateAbilityModifiers(character.dexterity)
-	character.modifiers[2] = calculateAbilityModifiers(character.constitution)
-	character.modifiers[3] = calculateAbilityModifiers(character.wisdom)
-	character.modifiers[4] = calculateAbilityModifiers(character.intelligence)
-	character.modifiers[5] = calculateAbilityModifiers(character.charisma)
-	return character.modifiers
+	character.Modifiers[0] = calculateAbilityModifiers(character.Strength)
+	character.Modifiers[1] = calculateAbilityModifiers(character.Dexterity)
+	character.Modifiers[2] = calculateAbilityModifiers(character.Constitution)
+	character.Modifiers[3] = calculateAbilityModifiers(character.Wisdom)
+	character.Modifiers[4] = calculateAbilityModifiers(character.Intelligence)
+	character.Modifiers[5] = calculateAbilityModifiers(character.Charisma)
+	return character.Modifiers
 }
