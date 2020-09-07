@@ -44,3 +44,22 @@ func GetCharacter(w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(returnCharacter)
 
 }
+
+func DeleteCharacter(w http.ResponseWriter, r *http.Request) {
+	vars := mux.Vars(r)
+	key := vars["id"]
+	psqlInfo := fmt.Sprintf("host=%s port=%d user=%s password=%s dbname=%s sslmode=disable", character.Host, character.Port, character.User, password, character.Dbname)
+	db, err := sql.Open("postgres", psqlInfo)
+	if err != nil {
+		log.Fatal()
+	}
+
+	deleteCommand := "DELETE FROM dnd.dnd_characters WHERE id = $1"
+
+	result, err := db.Exec(deleteCommand, key)
+	if err != nil {
+		log.Fatal()
+	}
+
+	json.NewEncoder(w).Encode(result)
+}
