@@ -73,6 +73,7 @@ func CreateCharacter(w http.ResponseWriter, r *http.Request) {
 
 	if err != nil {
 		json.NewEncoder(w).Encode(err)
+		return
 	}
 
 	json.NewEncoder(w).Encode(hero)

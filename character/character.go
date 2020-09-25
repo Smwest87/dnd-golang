@@ -189,8 +189,8 @@ func calculateAbilityModifiers(stat int) int {
 func GenerateCharacter(name string, class string) (*Character, error) {
 	roller := Dice.NewRoller()
 	character := Character{}
-	character.Name = os.Args[1]
-	character.Class = os.Args[2]
+	character.Name = name
+	character.Class = class
 	character.Level = 1
 	strength, err := roller.RollStat()
 	if err != nil {
