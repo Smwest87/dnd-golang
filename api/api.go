@@ -8,6 +8,7 @@ import (
 	"log"
 	"net/http"
 	"os"
+	"reflect"
 
 	"github.com/gorilla/mux"
 	"github.com/smwest87/dnd-golang/character"
@@ -76,6 +77,13 @@ func CreateCharacter(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	_, err = character.InsertCharacter(*hero)
+
+	if err != nil {
+		json.NewEncoder(w).Encode(err)
+		return
+	}
+
 	json.NewEncoder(w).Encode(hero)
 
 }
@@ -90,6 +98,17 @@ func UpdateCharacter(w http.ResponseWriter, r *http.Request) {
 	err = json.Unmarshal(body, &returnCharacter)
 	if err != nil {
 		json.NewEncoder(w).Encode(err)
+	}
+
+	fields := reflect.TypeOf(returnCharacter)
+	values := reflect.ValueOf(returnCharacter)
+
+	totalFields := fields.NumField()
+
+	for i := 0; i < totalFields; i++ {
+		field := fields.Field(i)
+		value := values.Field(i)
+		fmt.Print("Type", field.Type, ",", field.Name, "=", value, "\n")
 	}
 
 }
