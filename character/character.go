@@ -7,6 +7,7 @@ import (
 	"math"
 	"os"
 
+	config "github.com/smwest87/dnd-golang/configuration"
 	Dice "github.com/smwest87/dnd_dice"
 
 	pq "github.com/lib/pq"
@@ -33,13 +34,6 @@ type Character struct {
 }
 
 type modArray [6]int
-
-const (
-	Host   = "localhost"
-	Port   = 5432
-	User   = "postgres"
-	Dbname = "postgres"
-)
 
 var password = os.Getenv("DB_PASSWORD")
 
@@ -241,7 +235,7 @@ func GenerateCharacter(name string, class string) (*Character, error) {
 
 //InsertCharacter -- insert character into PSQL db
 func InsertCharacter(character Character) (sql.Result, error) {
-	psqlInfo := fmt.Sprintf("host=%s port=%d user=%s password=%s dbname=%s sslmode=disable", Host, Port, User, password, Dbname)
+	psqlInfo := fmt.Sprintf("host=%s port=%d user=%s password=%s dbname=%s sslmode=disable", config.Host, config.Port, config.User, password, config.Dbname)
 	db, err := sql.Open("postgres", psqlInfo)
 	if err != nil {
 		return nil, err
