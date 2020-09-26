@@ -19,5 +19,4 @@ func main() {
 	fmt.Println("Preparing to serve")
 	http.ListenAndServe(":10000", router)
 	fmt.Println("serve failed")
-
 }

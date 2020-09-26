@@ -5,13 +5,13 @@ import (
 	"encoding/json"
 	"fmt"
 	"io/ioutil"
+	"log"
 	"net/http"
 	"os"
 	"reflect"
 
 	"github.com/gorilla/mux"
 	"github.com/lib/pq"
-	"github.com/shipt/shipt-tofu/http/server/response"
 	"github.com/smwest87/dnd-golang/character"
 	config "github.com/smwest87/dnd-golang/configuration"
 )
@@ -134,20 +134,27 @@ func ResponseWrapper(f EndpointFunc) http.HandlerFunc {
 		switch {
 		case err != nil:
 			// After launch, consider warnings for non 5xx errors
-			response.Error(
-				w,
-				statusCode,
-				err.Error(),
-				err,
-				nil,
-			)
+			w.Header().Set("Content-Type", "application/json")
+			w.WriteHeader(statusCode)
+			json_err, err := json.Marshal(err)
+			if err != nil {
+				log.Fatal()
+			}
+			_, err = w.Write(json_err)
+			if err != nil {
+				log.Fatal()
+			}
 		default:
-			response.WithPayload(
-				w,
-				statusCode,
-				payload,
-				nil,
-			)
+			w.Header().Set("Content-Type", "application/json")
+			w.WriteHeader(statusCode)
+			json_payload, err := json.Marshal(payload)
+			if err != nil {
+				log.Fatal()
+			}
+			_, err = w.Write(json_payload)
+			if err != nil {
+				log.Fatal()
+			}
 		}
 	}
 }
