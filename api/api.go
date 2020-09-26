@@ -11,11 +11,14 @@ import (
 
 	"github.com/gorilla/mux"
 	"github.com/lib/pq"
+	"github.com/shipt/shipt-tofu/http/server/response"
 	"github.com/smwest87/dnd-golang/character"
 	config "github.com/smwest87/dnd-golang/configuration"
 )
 
 var password = os.Getenv("DB_PASSWORD")
+
+type endpointFunc func(r *http.Request) (int, []byte, error)
 
 func HomeLink(w http.ResponseWriter, r *http.Request) {
 	fmt.Fprintf(w, "Welcome home!")
@@ -121,4 +124,30 @@ func UpdateCharacter(w http.ResponseWriter, r *http.Request) (int, []byte, error
 		fmt.Print("Type", field.Type, ",", field.Name, "=", value, "\n")
 	}
 
+	return 200, nil, nil
+
+}
+
+func ResponseWrapper(f endpointFunc) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		statusCode, payload, err := f(r)
+		switch {
+		case err != nil:
+			// After launch, consider warnings for non 5xx errors
+			response.Error(
+				w,
+				statusCode,
+				err.Error(),
+				err,
+				nil,
+			)
+		default:
+			response.WithPayload(
+				w,
+				statusCode,
+				payload,
+				nil,
+			)
+		}
+	}
 }
