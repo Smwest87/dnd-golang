@@ -18,8 +18,6 @@ import (
 
 var password = os.Getenv("DB_PASSWORD")
 
-type endpointFunc func(r *http.Request) (int, []byte, error)
-
 func HomeLink(w http.ResponseWriter, r *http.Request) {
 	fmt.Fprintf(w, "Welcome home!")
 }
@@ -128,7 +126,9 @@ func UpdateCharacter(w http.ResponseWriter, r *http.Request) (int, []byte, error
 
 }
 
-func ResponseWrapper(f endpointFunc) http.HandlerFunc {
+type EndpointFunc func(r *http.Request) (int, []byte, error)
+
+func ResponseWrapper(f EndpointFunc) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		statusCode, payload, err := f(r)
 		switch {
