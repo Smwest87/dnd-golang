@@ -11,7 +11,6 @@ import (
 	"reflect"
 
 	"github.com/gorilla/mux"
-	"github.com/lib/pq"
 	"github.com/smwest87/dnd-golang/character"
 	config "github.com/smwest87/dnd-golang/configuration"
 )
@@ -34,8 +33,9 @@ func GetCharacter(w http.ResponseWriter, r *http.Request) (int, []byte, error) {
 	queryCharacter := "SELECT * FROM dnd.dnd_characters WHERE id = $1"
 	result := db.QueryRow(queryCharacter, key)
 	var returnCharacter character.Character
-	err = result.Scan(&returnCharacter.ID, &returnCharacter.Name, &returnCharacter.Class, &returnCharacter.Level, &returnCharacter.HitPointMaximum, &returnCharacter.Strength, &returnCharacter.Dexterity, &returnCharacter.Constitution, &returnCharacter.Wisdom, &returnCharacter.Intelligence, &returnCharacter.Charisma, &returnCharacter.Initiative, pq.Array(&returnCharacter.Modifiers))
+	err = result.Scan(&returnCharacter.ID, &returnCharacter.Name, &returnCharacter.Class, &returnCharacter.Level, &returnCharacter.HitPointMaximum, &returnCharacter.Strength, &returnCharacter.Dexterity, &returnCharacter.Constitution, &returnCharacter.Wisdom, &returnCharacter.Intelligence, &returnCharacter.Charisma, &returnCharacter.Initiative)
 	if err != nil {
+		fmt.Println(err.Error())
 		return 400, nil, err
 	}
 
@@ -71,27 +71,32 @@ func CreateCharacter(w http.ResponseWriter, r *http.Request) (int, []byte, error
 	returnCharacter := character.Character{}
 	body, err := ioutil.ReadAll(r.Body)
 	if err != nil {
+		fmt.Println(err)
 		return 400, nil, err
 	}
 	err = json.Unmarshal(body, &returnCharacter)
 	if err != nil {
+		fmt.Println(err)
 		return 400, nil, err
 	}
 
 	hero, err := character.GenerateCharacter(returnCharacter.Name, returnCharacter.Class)
 
 	if err != nil {
+		fmt.Println(err)
 		return 400, nil, err
 	}
 
 	_, err = character.InsertCharacter(*hero)
 
 	if err != nil {
+		fmt.Println(err)
 		return 400, nil, err
 	}
 
 	json_hero, err := json.Marshal(hero)
 	if err != nil {
+		fmt.Println(err)
 		return 400, nil, err
 	}
 
@@ -126,11 +131,11 @@ func UpdateCharacter(w http.ResponseWriter, r *http.Request) (int, []byte, error
 
 }
 
-type EndpointFunc func(r *http.Request) (int, []byte, error)
+type EndpointFunc func(w http.ResponseWriter, r *http.Request) (int, []byte, error)
 
 func ResponseWrapper(f EndpointFunc) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		statusCode, payload, err := f(r)
+		statusCode, payload, err := f(w, r)
 		switch {
 		case err != nil:
 			// After launch, consider warnings for non 5xx errors

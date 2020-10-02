@@ -9,25 +9,23 @@ import (
 
 	config "github.com/smwest87/dnd-golang/configuration"
 	Dice "github.com/smwest87/dnd_dice"
-
-	pq "github.com/lib/pq"
 )
 
 //Character contains character name class and level
 type Character struct {
-	ID              int      `json:"id"`
-	Name            string   `json:"name"`
-	Class           string   `json:"class"`
-	Level           int      `json:"level"`
-	HitPointMaximum int      `json:"hit_point_maximum"`
-	Strength        int      `json:"strength"`
-	Dexterity       int      `json:"dexterity"`
-	Constitution    int      `json:"constitution"`
-	Wisdom          int      `json:"wisdom"`
-	Intelligence    int      `json:"intelligence"`
-	Charisma        int      `json:"charisma"`
-	Initiative      int      `json:"intiative"`
-	Modifiers       modArray `json:"modifiers"`
+	ID              int    `json:"id"`
+	Name            string `json:"name"`
+	Class           string `json:"class"`
+	Level           int    `json:"level"`
+	HitPointMaximum int    `json:"hit_point_maximum"`
+	Strength        int    `json:"strength"`
+	Dexterity       int    `json:"dexterity"`
+	Constitution    int    `json:"constitution"`
+	Wisdom          int    `json:"wisdom"`
+	Intelligence    int    `json:"intelligence"`
+	Charisma        int    `json:"charisma"`
+	Initiative      int    `json:"intiative"`
+	//Modifiers       modArray `json:"modifiers"`
 	// TODO AC
 	// TODO FEATS
 	// TODO Class Properties
@@ -229,7 +227,7 @@ func GenerateCharacter(name string, class string) (*Character, error) {
 	character.Charisma = charisma
 	character.Initiative = int(math.Floor((float64(character.Dexterity) - 10) / 2))
 	//TODO Armor Class and FEATS
-	character.Modifiers = assignModifiers(character)
+	//character.Modifiers = assignModifiers(character)
 	return &character, err
 }
 
@@ -238,11 +236,12 @@ func InsertCharacter(character Character) (sql.Result, error) {
 	psqlInfo := fmt.Sprintf("host=%s port=%d user=%s password=%s dbname=%s sslmode=disable", config.Host, config.Port, config.User, password, config.Dbname)
 	db, err := sql.Open("postgres", psqlInfo)
 	if err != nil {
+		fmt.Println(err)
 		return nil, err
 	}
 	var charInsert = "INSERT INTO dnd.dnd_characters (name,class,level,hitpointmaximum,strength,dexterity,constitution,wisdom,intelligence,charisma, initiative, modifiers) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12);"
 
-	var result, insertErr = db.Exec(charInsert, character.Name, character.Class, character.Level, character.HitPointMaximum, character.Strength, character.Dexterity, character.Constitution, character.Wisdom, character.Intelligence, character.Charisma, character.Initiative, pq.Array(character.Modifiers))
+	var result, insertErr = db.Exec(charInsert, character.Name, character.Class, character.Level, character.HitPointMaximum, character.Strength, character.Dexterity, character.Constitution, character.Wisdom, character.Intelligence, character.Charisma, character.Initiative)
 	if insertErr != nil {
 		return nil, insertErr
 	}
@@ -250,7 +249,7 @@ func InsertCharacter(character Character) (sql.Result, error) {
 	return result, err
 }
 
-func assignModifiers(character Character) modArray {
+/*func assignModifiers(character Character) modArray {
 	character.Modifiers[0] = calculateAbilityModifiers(character.Strength)
 	character.Modifiers[1] = calculateAbilityModifiers(character.Dexterity)
 	character.Modifiers[2] = calculateAbilityModifiers(character.Constitution)
@@ -258,4 +257,4 @@ func assignModifiers(character Character) modArray {
 	character.Modifiers[4] = calculateAbilityModifiers(character.Intelligence)
 	character.Modifiers[5] = calculateAbilityModifiers(character.Charisma)
 	return character.Modifiers
-}
+}*/
