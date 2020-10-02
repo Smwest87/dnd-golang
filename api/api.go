@@ -36,7 +36,6 @@ func GetCharacter(w http.ResponseWriter, r *http.Request) (int, []byte, error) {
 	var returnCharacter character.Character
 	err = result.Scan(&returnCharacter.ID, &returnCharacter.Name, &returnCharacter.Class, &returnCharacter.Level, &returnCharacter.HitPointMaximum, &returnCharacter.Strength, &returnCharacter.Dexterity, &returnCharacter.Constitution, &returnCharacter.Wisdom, &returnCharacter.Intelligence, &returnCharacter.Charisma, &returnCharacter.Initiative)
 	if err != nil {
-		fmt.Println(err.Error())
 		return 400, nil, err
 	}
 
@@ -93,7 +92,6 @@ func CreateCharacter(w http.ResponseWriter, r *http.Request) (int, []byte, error
 
 	json_hero, err := json.Marshal(hero)
 	if err != nil {
-		fmt.Println(err)
 		return 400, nil, err
 	}
 
@@ -138,7 +136,7 @@ func ResponseWrapper(f EndpointFunc) http.HandlerFunc {
 			// After launch, consider warnings for non 5xx errors
 			w.Header().Set("Content-Type", "application/json")
 			w.WriteHeader(statusCode)
-			json_err, err := json.Marshal(err)
+			json_err, err := json.Marshal(err.Error())
 			if err != nil {
 				log.Fatal()
 			}
@@ -149,11 +147,7 @@ func ResponseWrapper(f EndpointFunc) http.HandlerFunc {
 		default:
 			w.Header().Set("Content-Type", "application/json")
 			w.WriteHeader(statusCode)
-			json_payload, err := json.Marshal(payload)
-			if err != nil {
-				log.Fatal()
-			}
-			_, err = w.Write(json_payload)
+			_, err = w.Write(payload)
 			if err != nil {
 				log.Fatal()
 			}

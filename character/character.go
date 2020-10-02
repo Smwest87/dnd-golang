@@ -238,7 +238,6 @@ func InsertCharacter(character Character) (sql.Result, error) {
 	psqlInfo := fmt.Sprintf("host=%s port=%d user=%s password=%s dbname=%s sslmode=disable", config.Host, config.Port, config.User, password, config.Dbname)
 	db, err := sql.Open("postgres", psqlInfo)
 	if err != nil {
-		fmt.Println(err)
 		return nil, err
 	}
 	var charInsert = "INSERT INTO dnd.dnd_characters (name,class,level,hitpointmaximum,strength,dexterity,constitution,wisdom,intelligence,charisma, initiative) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11);"
