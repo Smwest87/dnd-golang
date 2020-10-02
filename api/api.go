@@ -11,6 +11,7 @@ import (
 	"reflect"
 
 	"github.com/gorilla/mux"
+	_ "github.com/lib/pq"
 	"github.com/smwest87/dnd-golang/character"
 	config "github.com/smwest87/dnd-golang/configuration"
 )
@@ -71,26 +72,22 @@ func CreateCharacter(w http.ResponseWriter, r *http.Request) (int, []byte, error
 	returnCharacter := character.Character{}
 	body, err := ioutil.ReadAll(r.Body)
 	if err != nil {
-		fmt.Println(err)
 		return 400, nil, err
 	}
 	err = json.Unmarshal(body, &returnCharacter)
 	if err != nil {
-		fmt.Println(err)
 		return 400, nil, err
 	}
 
 	hero, err := character.GenerateCharacter(returnCharacter.Name, returnCharacter.Class)
 
 	if err != nil {
-		fmt.Println(err)
 		return 400, nil, err
 	}
 
 	_, err = character.InsertCharacter(*hero)
 
 	if err != nil {
-		fmt.Println(err)
 		return 400, nil, err
 	}
 

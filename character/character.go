@@ -7,6 +7,8 @@ import (
 	"math"
 	"os"
 
+	_ "github.com/lib/pq"
+
 	config "github.com/smwest87/dnd-golang/configuration"
 	Dice "github.com/smwest87/dnd_dice"
 )
@@ -239,7 +241,7 @@ func InsertCharacter(character Character) (sql.Result, error) {
 		fmt.Println(err)
 		return nil, err
 	}
-	var charInsert = "INSERT INTO dnd.dnd_characters (name,class,level,hitpointmaximum,strength,dexterity,constitution,wisdom,intelligence,charisma, initiative, modifiers) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12);"
+	var charInsert = "INSERT INTO dnd.dnd_characters (name,class,level,hitpointmaximum,strength,dexterity,constitution,wisdom,intelligence,charisma, initiative) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11);"
 
 	var result, insertErr = db.Exec(charInsert, character.Name, character.Class, character.Level, character.HitPointMaximum, character.Strength, character.Dexterity, character.Constitution, character.Wisdom, character.Intelligence, character.Charisma, character.Initiative)
 	if insertErr != nil {

@@ -18,5 +18,4 @@ func main() {
 	router.HandleFunc("/character/new", api.ResponseWrapper(api.CreateCharacter)).Methods("POST")
 	fmt.Println("Preparing to serve")
 	http.ListenAndServe(":10000", router)
-	fmt.Println("serve failed")
 }
