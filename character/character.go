@@ -234,20 +234,21 @@ func GenerateCharacter(name string, class string) (*Character, error) {
 }
 
 //InsertCharacter -- insert character into PSQL db
-func InsertCharacter(character Character) (sql.Result, error) {
+func InsertCharacter(character Character) (int, error) {
 	psqlInfo := fmt.Sprintf("host=%s port=%d user=%s password=%s dbname=%s sslmode=disable", config.Host, config.Port, config.User, password, config.Dbname)
 	db, err := sql.Open("postgres", psqlInfo)
 	if err != nil {
-		return nil, err
+		return -1, err
 	}
-	var charInsert = "INSERT INTO dnd.dnd_characters (name,class,level,hitpointmaximum,strength,dexterity,constitution,wisdom,intelligence,charisma, initiative) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11);"
+	var charInsert = "INSERT INTO dnd.dnd_characters (name,class,level,hitpointmaximum,strength,dexterity,constitution,wisdom,intelligence,charisma, initiative) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11) RETURNING id;"
 
-	var result, insertErr = db.Exec(charInsert, character.Name, character.Class, character.Level, character.HitPointMaximum, character.Strength, character.Dexterity, character.Constitution, character.Wisdom, character.Intelligence, character.Charisma, character.Initiative)
-	if insertErr != nil {
-		return nil, insertErr
+	var id int
+	err = db.QueryRow(charInsert, character.Name, character.Class, character.Level, character.HitPointMaximum, character.Strength, character.Dexterity, character.Constitution, character.Wisdom, character.Intelligence, character.Charisma, character.Initiative).Scan(&id)
+	if err != nil {
+		return -1, err
 	}
 
-	return result, err
+	return id, err
 }
 
 /*func assignModifiers(character Character) modArray {

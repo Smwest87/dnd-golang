@@ -1,58 +1,19 @@
 # dnd-golang
 
+## Running Locaaly
 
-DND
-
-CREATE SCHEMA IF NOT EXISTS dnd;
-
-CREATE TABLE IF NOT EXISTS dnd.dnd_characters
-(
-id SERIAL PRIMARY KEY,
-name VARCHAR NOT NULL,
-class VARCHAR NOT NULL,
-level int NOT NULL,
-hitpointmaximum int NOT NULL,
-strength int NOT NULL,
-dexterity int NOT NULL,
-constitution int NOT NULL,
-wisdom int NOT NULL,
-intelligence int NOT NULL,
-charisma int NOT NULL,
-initiative int NOT NULL,
-modifiers int[] NOT NULL
-);
-
-CREATE TABLE IF NOT EXISTS dnd.races
-(
-id serial Primary key NOT NULL,
-name text NOT NULL,
-strength int NOT NULL,
-dexterity int NOT NULL,
-constitution int NOT NULL,
-wisdom int NOT NULL,
-intelligence int NOT NULL,
-charisma int NOT NULL,
-size text NOT NULL,
-speed int NOT NULL,
-languages TEXT [],
-traits TEXT []
-);
-
-INSERT INTO dnd.races
-(name, strength, dexterity, constitution, wisdom, intelligence, charisma, size, speed,languages,traits)
-VALUES
-('Gray Dwarf',1,0,2,0,0,0, 'Medium', 25, ARRAY ['Common','Dwarvish'], ARRAY ['120 Darkvision', 'Dwarven Combat Training', 'Stone-cunning', 'Adv. on poison saves', 'Poison Res.', 'Smiths/Brewers/Masons tools prof.', 'Speed not reduced by heavy armor', 'Sunlight Sensitivity','Duergar Magic','Illusion,charm, paralysis resistance']);
-
-SELECT * FROM dnd.races;
-
-DELETE FROM dnd.races 
-WHERE id is not NULL;
-
-DROP TABLE dnd.races;
+1. Update postgres values in configuration/config.go (Host, Port, User, Dbname)
+2. Set DB_PASSWORD as an environment variable for Postgres
+3. You may need to get the Dice package. ```go get github.com/smwest87/dnd_dice```
+4. Create the schema and tables using SQL statements in sql/setup.sql. Currently this is manual.
+5. `go run main.go`
 
 
-SELECT * FROM dnd.dnd_characters;
+## Post Request Body
 
-DELETE FROM dnd.dnd_characters;
+New Character endpoint : `/character/new`
 
-DROP TABLE dnd.dnd_characters;
+Body :  ```{
+	"name": "Kongul",
+	"class": "Barbarian"
+}```

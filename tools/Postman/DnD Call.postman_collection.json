@@ -11,14 +11,15 @@
 				"method": "GET",
 				"header": [],
 				"url": {
-					"raw": "localhost:8080/character/1",
+					"raw": "http://localhost:10000/character/39",
+					"protocol": "http",
 					"host": [
 						"localhost"
 					],
-					"port": "8080",
+					"port": "10000",
 					"path": [
 						"character",
-						"1"
+						"39"
 					]
 				}
 			},
@@ -30,15 +31,15 @@
 				"method": "DELETE",
 				"header": [],
 				"url": {
-					"raw": "http://localhost:8080/character/1",
+					"raw": "http://localhost:10000/character/20",
 					"protocol": "http",
 					"host": [
 						"localhost"
 					],
-					"port": "8080",
+					"port": "10000",
 					"path": [
 						"character",
-						"1"
+						"20"
 					]
 				}
 			},
@@ -59,14 +60,15 @@
 					}
 				},
 				"url": {
-					"raw": "http://localhost:8080/character",
+					"raw": "http://localhost:10000/character/new",
 					"protocol": "http",
 					"host": [
 						"localhost"
 					],
-					"port": "8080",
+					"port": "10000",
 					"path": [
-						"character"
+						"character",
+						"new"
 					]
 				}
 			},
@@ -87,15 +89,15 @@
 					}
 				},
 				"url": {
-					"raw": "http://localhost:8080/character/1",
+					"raw": "http://localhost:10000/character/14",
 					"protocol": "http",
 					"host": [
 						"localhost"
 					],
-					"port": "8080",
+					"port": "10000",
 					"path": [
 						"character",
-						"1"
+						"14"
 					]
 				}
 			},

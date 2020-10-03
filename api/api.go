@@ -84,11 +84,13 @@ func CreateCharacter(w http.ResponseWriter, r *http.Request) (int, []byte, error
 		return 400, nil, err
 	}
 
-	_, err = character.InsertCharacter(*hero)
+	insertResult, err := character.InsertCharacter(*hero)
 
 	if err != nil {
 		return 400, nil, err
 	}
+
+	hero.ID = insertResult
 
 	json_hero, err := json.Marshal(hero)
 	if err != nil {
