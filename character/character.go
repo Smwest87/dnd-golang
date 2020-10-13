@@ -26,7 +26,7 @@ type Character struct {
 	Wisdom          int    `json:"wisdom"`
 	Intelligence    int    `json:"intelligence"`
 	Charisma        int    `json:"charisma"`
-	Initiative      int    `json:"intiative"`
+	Initiative      int    `json:"initiative"`
 	//Modifiers       modArray `json:"modifiers"`
 	// TODO AC
 	// TODO FEATS
