@@ -9,6 +9,7 @@ import (
 	"net/http"
 	"os"
 	"reflect"
+	"strings"
 
 	"github.com/gorilla/mux"
 	_ "github.com/lib/pq"
@@ -78,7 +79,7 @@ func CreateCharacter(w http.ResponseWriter, r *http.Request) (int, []byte, error
 		return 400, nil, err
 	}
 
-	hero, err := character.GenerateCharacter(returnCharacter.Name, returnCharacter.Class)
+	hero, err := character.GenerateCharacter(returnCharacter.Name, strings.ToLower(returnCharacter.Class))
 
 	if err != nil {
 		return 400, nil, err
@@ -101,6 +102,7 @@ func CreateCharacter(w http.ResponseWriter, r *http.Request) (int, []byte, error
 
 }
 
+// TODO -- How the hell is this supposed to work?
 func UpdateCharacter(w http.ResponseWriter, r *http.Request) (int, []byte, error) {
 	returnCharacter := character.Character{}
 
@@ -137,6 +139,7 @@ func ResponseWrapper(f EndpointFunc) http.HandlerFunc {
 		case err != nil:
 			// After launch, consider warnings for non 5xx errors
 			w.Header().Set("Content-Type", "application/json")
+			w.Header().Set("Access-Control-Allow-Origin", "*")
 			w.WriteHeader(statusCode)
 			json_err, err := json.Marshal(err.Error())
 			if err != nil {
@@ -148,6 +151,7 @@ func ResponseWrapper(f EndpointFunc) http.HandlerFunc {
 			}
 		default:
 			w.Header().Set("Content-Type", "application/json")
+			w.Header().Set("Access-Control-Allow-Origin", "*")
 			w.WriteHeader(statusCode)
 			_, err = w.Write(payload)
 			if err != nil {

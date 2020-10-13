@@ -42,7 +42,7 @@ func calculateMaximumHealth(class string, modifier int) (int, error) {
 	roller := Dice.NewRoller()
 
 	switch class {
-	case "Barbarian":
+	case "barbarian":
 		value, err := roller.RollDie(12, roller.RNG)
 		if err != nil {
 			return -1, err
@@ -53,7 +53,7 @@ func calculateMaximumHealth(class string, modifier int) (int, error) {
 		}
 
 		return value + modifier, nil
-	case "Bard":
+	case "bard":
 		value, err := roller.RollDie(8, roller.RNG)
 		if err != nil {
 			return -1, err
@@ -64,7 +64,7 @@ func calculateMaximumHealth(class string, modifier int) (int, error) {
 		}
 
 		return value + modifier, nil
-	case "Cleric":
+	case "cleric":
 		value, err := roller.RollDie(8, roller.RNG)
 		if err != nil {
 			return -1, err
@@ -75,7 +75,7 @@ func calculateMaximumHealth(class string, modifier int) (int, error) {
 		}
 
 		return value + modifier, nil
-	case "Druid":
+	case "druid":
 		value, err := roller.RollDie(8, roller.RNG)
 		if err != nil {
 			return -1, err
@@ -86,7 +86,7 @@ func calculateMaximumHealth(class string, modifier int) (int, error) {
 		}
 
 		return value + modifier, nil
-	case "Fighter":
+	case "fighter":
 		value, err := roller.RollDie(10, roller.RNG)
 		if err != nil {
 			return -1, err
@@ -97,7 +97,7 @@ func calculateMaximumHealth(class string, modifier int) (int, error) {
 		}
 
 		return value + modifier, nil
-	case "Monk":
+	case "monk":
 		value, err := roller.RollDie(8, roller.RNG)
 		if err != nil {
 			return -1, err
@@ -108,7 +108,7 @@ func calculateMaximumHealth(class string, modifier int) (int, error) {
 		}
 
 		return value + modifier, nil
-	case "Paladin":
+	case "paladin":
 		value, err := roller.RollDie(10, roller.RNG)
 		if err != nil {
 			return -1, err
@@ -119,7 +119,7 @@ func calculateMaximumHealth(class string, modifier int) (int, error) {
 		}
 
 		return value + modifier, nil
-	case "Ranger":
+	case "ranger":
 		value, err := roller.RollDie(10, roller.RNG)
 		if err != nil {
 			return -1, err
@@ -130,7 +130,7 @@ func calculateMaximumHealth(class string, modifier int) (int, error) {
 		}
 
 		return value + modifier, nil
-	case "Rogue":
+	case "rogue":
 		value, err := roller.RollDie(8, roller.RNG)
 		if err != nil {
 			return -1, err
@@ -141,7 +141,7 @@ func calculateMaximumHealth(class string, modifier int) (int, error) {
 		}
 
 		return value + modifier, nil
-	case "Sorcerer":
+	case "sorcerer":
 		value, err := roller.RollDie(6, roller.RNG)
 		if err != nil {
 			return -1, err
@@ -152,7 +152,7 @@ func calculateMaximumHealth(class string, modifier int) (int, error) {
 		}
 
 		return value + modifier, nil
-	case "Warlock":
+	case "warlock":
 		value, err := roller.RollDie(8, roller.RNG)
 		if err != nil {
 			return -1, err
@@ -163,7 +163,7 @@ func calculateMaximumHealth(class string, modifier int) (int, error) {
 		}
 
 		return value + modifier, nil
-	case "Wizard":
+	case "wizard":
 		value, err := roller.RollDie(6, roller.RNG)
 		if err != nil {
 			return -1, err
